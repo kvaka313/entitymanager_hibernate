@@ -9,6 +9,7 @@
         <class>com.infopulse.entity.Telephone</class>
         <class>com.infopulse.entity.Bank</class>
         <class>com.infopulse.entity.ClientBank</class>
+        <class>com.infopulse.entity.BadClient</class>
         <properties>
             <property name="hibernate.connection.driver_class" value = "org.postgresql.Driver"/>
             <property name="hibernate.connection.username" value="postgres"/>

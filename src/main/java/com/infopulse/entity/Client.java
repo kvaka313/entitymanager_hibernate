@@ -9,11 +9,19 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.List;
 
+import static javax.persistence.DiscriminatorType.STRING;
+import static javax.persistence.InheritanceType.JOINED;
+import static javax.persistence.InheritanceType.SINGLE_TABLE;
+import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @Entity
 @Table(name="clients")
+@Inheritance(strategy=TABLE_PER_CLASS)
+//@DiscriminatorColumn(name="Typecli", discriminatorType=STRING, length=20)
+//@DiscriminatorValue("CLIENT")
 public class Client {
  //single primary key
     @Id

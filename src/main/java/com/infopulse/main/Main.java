@@ -2,6 +2,7 @@ package com.infopulse.main;
 
 import com.infopulse.entity.*;
 import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -91,8 +92,48 @@ public class Main {
         entityManager.persist(client);
         entityManager.persist(bank2);
 
+        BadClient badClient = new BadClient();
+        badClient.setName("Kolya");
+        badClient.setSurename("Pupkin");
+        badClient.setSum(300);
+        entityManager.persist(badClient);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        List<Order> ordersList = entityManager
+                .createQuery("select o FROM Order o JOIN o.client cl WHERE cl.name = 'Kolya'", Order.class).getResultList();
+        for(Order o: ordersList){
+            System.out.println(o.getName());
+        }
+        Order o1 = ordersList.get(0);
+        Client c= o1.getClient();
+        c.getOrders().remove(o1);
+        o1.setClient(null);
+        entityManager.remove(o1);
+        entityManager.getTransaction().commit();
+        entityManager.getTransaction().begin();
+        List<Result> result = entityManager
+                .createQuery("SELECT new com.infopulse.entity.Result(cl.name, o.name) FROM Client cl JOIN cl.orders o", Result.class).getResultList();
+        for(Result r: result){
+            System.out.println(r.getClientName()+" "+r.getOrderName());
+        }
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        List<Statustics> statistics = entityManager
+                .createQuery(
+                        "SELECT new com.infopulse.entity.Statustics(cl.name, count(cl.name)) " +
+                               "FROM Client cl WHERE cl.name = :name GROUP BY cl.name", Statustics.class)
+                .setParameter("name", "Kolya")
+                .getResultList();
+
+        for(Statustics s:statistics){
+            System.out.println(s.getName()+" "+s.getCount());
+        }
+
 
         entityManager.getTransaction().commit();
+
         sessionFactory.close();
 
     }
