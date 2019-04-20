@@ -6,6 +6,9 @@ import org.hibernate.stat.Statistics;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,10 +133,33 @@ public class Main {
         for(Statustics s:statistics){
             System.out.println(s.getName()+" "+s.getCount());
         }
-
-
         entityManager.getTransaction().commit();
 
+        entityManager.getTransaction().begin();
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Client> criteria = builder
+                .createQuery( Client.class );
+        Root<Client> root = criteria.from( Client.class );
+        criteria.select(root);
+        List<Client> clients = entityManager.createQuery(criteria).getResultList();
+        for(Client cli: clients){
+            System.out.println(cli.getName());
+        }
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+
+        CriteriaBuilder builder1 = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> criteria1 = builder
+                .createQuery( String.class );
+        Root<Client> root1 = criteria1.from( Client.class );
+        criteria1.select(root1.get(Client_.name));
+        List<String> clientNames = entityManager.createQuery(criteria1).getResultList();
+        for(String name: clientNames){
+            System.out.println(name);
+        }
+        entityManager.getTransaction().commit();
         sessionFactory.close();
 
     }
