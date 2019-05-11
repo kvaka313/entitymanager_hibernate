@@ -3,12 +3,12 @@ package com.infopulse.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 
 import static javax.persistence.DiscriminatorType.STRING;
@@ -26,6 +26,7 @@ import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "myregion")
 //@DiscriminatorColumn(name="Typecli", discriminatorType=STRING, length=20)
 //@DiscriminatorValue("CLIENT")
+@DynamicUpdate
 public class Client {
  //single primary key
     @Id
@@ -56,7 +57,7 @@ public class Client {
     private Telephone telephone;
 
     @Formula("concat('aaa', '-', 'bbb')")
-    private String nameSurname; //name-surename
+    private String sname; //name-surename
 
 //    @ManyToMany(mappedBy = "clients")
 //    private List<Bank> banks;
@@ -64,7 +65,11 @@ public class Client {
     @OneToMany(mappedBy = "client")
     private List<ClientBank> clientBanks;
 
-
+   @PostPersist
+   @PostLoad
+   public void mymethod(){
+       System.out.println("KKKKKKKK");
+    }
 
 
 }

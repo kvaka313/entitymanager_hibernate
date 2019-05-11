@@ -148,7 +148,7 @@ public class Main {
         for (Client cli : clients) {
             System.out.println(cli.getName());
             System.out.println(cli.getSurename());
-            System.out.println(cli.getNameSurname());
+            System.out.println(cli.getSname());
         }
         entityManager.getTransaction().commit();
 
@@ -186,7 +186,7 @@ public class Main {
         List<Client> clientsList =entityManager.createQuery( "from Client", Client.class).getResultList();;
         for (Client cl : clientsList) {
             System.out.println(cl.getName());
-            System.out.println(cl.getNameSurname());
+            System.out.println(cl.getSname());
         }
         entityManager.getTransaction().commit();
 
