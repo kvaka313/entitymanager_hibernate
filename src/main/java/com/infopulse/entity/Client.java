@@ -3,6 +3,7 @@ package com.infopulse.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -20,6 +21,8 @@ import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
 @Entity
 @Table(name="clients")
 @Inheritance(strategy=TABLE_PER_CLASS)
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "myregion")
 //@DiscriminatorColumn(name="Typecli", discriminatorType=STRING, length=20)
 //@DiscriminatorValue("CLIENT")
 public class Client {

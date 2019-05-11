@@ -179,7 +179,7 @@ public class Main {
         }
         entityManager.getTransaction().commit();
         entityManager.close();
-
+        sessionFactory.getSessionFactory().getCache().evictRegion("myregion");
         sessionFactory.close();
       }
 
