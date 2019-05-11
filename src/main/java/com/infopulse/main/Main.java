@@ -8,15 +8,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         SessionFactory sessionFactory = (SessionFactory)
-              Persistence.createEntityManagerFactory( "org.hibernate.tutorial.jpa" );
+                Persistence.createEntityManagerFactory("org.hibernate.tutorial.jpa");
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
         Client client = new Client();
@@ -105,11 +106,11 @@ public class Main {
         entityManager.getTransaction().begin();
         List<Order> ordersList = entityManager
                 .createQuery("select o FROM Order o JOIN o.client cl WHERE cl.name = 'Kolya'", Order.class).getResultList();
-        for(Order o: ordersList){
+        for (Order o : ordersList) {
             System.out.println(o.getName());
         }
         Order o1 = ordersList.get(0);
-        Client c= o1.getClient();
+        Client c = o1.getClient();
         c.getOrders().remove(o1);
         o1.setClient(null);
         entityManager.remove(o1);
@@ -117,8 +118,8 @@ public class Main {
         entityManager.getTransaction().begin();
         List<Result> result = entityManager
                 .createQuery("SELECT new com.infopulse.entity.Result(cl.name, o.name) FROM Client cl JOIN cl.orders o", Result.class).getResultList();
-        for(Result r: result){
-            System.out.println(r.getClientName()+" "+r.getOrderName());
+        for (Result r : result) {
+            System.out.println(r.getClientName() + " " + r.getOrderName());
         }
         entityManager.getTransaction().commit();
 
@@ -126,12 +127,12 @@ public class Main {
         List<Statustics> statistics = entityManager
                 .createQuery(
                         "SELECT new com.infopulse.entity.Statustics(cl.name, count(cl.name)) " +
-                               "FROM Client cl WHERE cl.name = :name GROUP BY cl.name", Statustics.class)
+                                "FROM Client cl WHERE cl.name = :name GROUP BY cl.name", Statustics.class)
                 .setParameter("name", "Kolya")
                 .getResultList();
 
-        for(Statustics s:statistics){
-            System.out.println(s.getName()+" "+s.getCount());
+        for (Statustics s : statistics) {
+            System.out.println(s.getName() + " " + s.getCount());
         }
         entityManager.getTransaction().commit();
 
@@ -139,11 +140,11 @@ public class Main {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Client> criteria = builder
-                .createQuery( Client.class );
-        Root<Client> root = criteria.from( Client.class );
+                .createQuery(Client.class);
+        Root<Client> root = criteria.from(Client.class);
         criteria.select(root);
         List<Client> clients = entityManager.createQuery(criteria).getResultList();
-        for(Client cli: clients){
+        for (Client cli : clients) {
             System.out.println(cli.getName());
         }
         entityManager.getTransaction().commit();
@@ -152,15 +153,35 @@ public class Main {
 
         CriteriaBuilder builder1 = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> criteria1 = builder
-                .createQuery( String.class );
-        Root<Client> root1 = criteria1.from( Client.class );
+                .createQuery(String.class);
+        Root<Client> root1 = criteria1.from(Client.class);
         criteria1.select(root1.get(Client_.name));
         List<String> clientNames = entityManager.createQuery(criteria1).getResultList();
-        for(String name: clientNames){
+        for (String name : clientNames) {
             System.out.println(name);
         }
         entityManager.getTransaction().commit();
-        sessionFactory.close();
 
-    }
+        entityManager.getTransaction().begin();
+        CriteriaBuilder builder2 = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria2 = builder
+                .createQuery(Order.class);
+        Root<Order> root2 = criteria2.from(Order.class);
+        criteria2.select(root2);
+        Join<Order, Client> orderJoin
+                = root2.join(Order_.client);
+
+        criteria2.where(builder2.equal(orderJoin.get(Client_.name), "Kolya"));
+        List<Order> orderLists = entityManager.createQuery(criteria2)
+                .getResultList();
+        for (Order o : orderLists) {
+            System.out.println(o.getName());
+        }
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        sessionFactory.close();
+      }
+
 }
+
