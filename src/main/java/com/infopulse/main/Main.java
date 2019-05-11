@@ -115,6 +115,7 @@ public class Main {
         o1.setClient(null);
         entityManager.remove(o1);
         entityManager.getTransaction().commit();
+
         entityManager.getTransaction().begin();
         List<Result> result = entityManager
                 .createQuery("SELECT new com.infopulse.entity.Result(cl.name, o.name) FROM Client cl JOIN cl.orders o", Result.class).getResultList();
@@ -146,6 +147,8 @@ public class Main {
         List<Client> clients = entityManager.createQuery(criteria).getResultList();
         for (Client cli : clients) {
             System.out.println(cli.getName());
+            System.out.println(cli.getSurename());
+            System.out.println(cli.getNameSurname());
         }
         entityManager.getTransaction().commit();
 
@@ -178,6 +181,15 @@ public class Main {
             System.out.println(o.getName());
         }
         entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        List<Client> clientsList =entityManager.createQuery( "from Client", Client.class).getResultList();;
+        for (Client cl : clientsList) {
+            System.out.println(cl.getName());
+            System.out.println(cl.getNameSurname());
+        }
+        entityManager.getTransaction().commit();
+
         entityManager.close();
         sessionFactory.getSessionFactory().getCache().evictRegion("myregion");
         sessionFactory.close();

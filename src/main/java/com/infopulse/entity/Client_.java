@@ -13,7 +13,6 @@ public class Client_ {
     public static volatile ListAttribute<Client, Order> orders;
     public static volatile SingularAttribute<Client, Telephone> telephone;
     public static volatile SingularAttribute<Client, ClientBank> clientBanks;
-
-
+    public static volatile SingularAttribute<Client, String> nameSurename;
 }
 

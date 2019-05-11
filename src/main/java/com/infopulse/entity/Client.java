@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -54,10 +55,16 @@ public class Client {
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private Telephone telephone;
 
+    @Formula("concat('aaa', '-', 'bbb')")
+    private String nameSurname; //name-surename
+
 //    @ManyToMany(mappedBy = "clients")
 //    private List<Bank> banks;
 
     @OneToMany(mappedBy = "client")
     private List<ClientBank> clientBanks;
+
+
+
 
 }
